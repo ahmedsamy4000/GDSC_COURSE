@@ -20,7 +20,7 @@ class _ListViewTaskState extends State<ListViewTask> {
       appBar: AppBar(
         backgroundColor: Colors.grey[700],
         title: const Text(
-          'Flutter Mapp',
+          'Flutter Map',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
