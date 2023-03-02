@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
@@ -11,6 +12,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool isVisible = false;
   bool textVisibility = false;
+  final formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,36 +42,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15),
-                child: Column(
-                  children: [
-                    textItem(
-                        textFieldName: 'Full Name',
-                        prefixIcon: Icons.person_2_outlined,
-                        type: TextInputType.name),
-                    textItem(
-                        textFieldName: 'Email',
-                        prefixIcon: Icons.email_outlined,
-                        type: TextInputType.emailAddress),
-                    passwordTextItem(
-                      textFieldName: 'Password',
-                      prefixIcon: Icons.lock_open_rounded,
-                      suffixIcon:
-                          isVisible ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    passwordTextItem(
-                      textFieldName: 'Confirm Password',
-                      prefixIcon: Icons.lock_open_rounded,
-                      suffixIcon:
-                          isVisible ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    textItem(
-                      textFieldName: 'Phone',
-                      prefixIcon: Icons.phone_android_outlined,
-                      type: TextInputType.phone,
-                    ),
-                    button('SignUp', Colors.white, Colors.deepPurple, false),
-                    button('Login', Colors.deepPurple, Colors.white, true)
-                  ],
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      textItem(
+                          textFieldName: 'Full Name',
+                          prefixIcon: Icons.person_outlined,
+                          type: TextInputType.name,
+                          valText: 'Name'),
+                      textItem(
+                          textFieldName: 'Email',
+                          prefixIcon: Icons.email_outlined,
+                          type: TextInputType.emailAddress,
+                          valText: 'Email'),
+                      passwordTextItem(
+                        textFieldName: 'Password',
+                        fieldConroller: emailController,
+                        prefixIcon: Icons.lock_open_rounded,
+                        suffixIcon:
+                            isVisible ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      passwordTextItem(
+                        textFieldName: 'Confirm Password',
+                        prefixIcon: Icons.lock_open_rounded,
+                        suffixIcon:
+                            isVisible ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      textItem(
+                          textFieldName: 'Phone',
+                          prefixIcon: Icons.phone_android_outlined,
+                          type: TextInputType.phone,
+                          valText: 'PhoneNumber'),
+                      button('SignUp', Colors.white, Colors.deepPurple, false),
+                      button('Login', Colors.deepPurple, Colors.white, true)
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -79,7 +88,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget textItem(
-      {String? textFieldName, IconData? prefixIcon, TextInputType? type}) {
+      {String? textFieldName,
+      IconData? prefixIcon,
+      TextInputType? type,
+      var fieldController,
+      String? valText}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Container(
@@ -88,6 +101,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           color: Colors.black12,
         ),
         child: TextFormField(
+          controller: fieldController,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'please fill your $valText';
+            } else if (EmailValidator.validate(value) == false) {
+              return 'Invalid Email(example@test.com)';
+            } else {
+              return null;
+            }
+          },
           keyboardType: type,
           style: const TextStyle(fontSize: 13, color: Colors.deepPurple),
           decoration: InputDecoration(
@@ -111,6 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String? textFieldName,
     IconData? prefixIcon,
     IconData? suffixIcon,
+    var fieldConroller,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -119,7 +143,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           borderRadius: BorderRadius.circular(9.0),
           color: Colors.black12,
         ),
-        child: TextField(
+        child: TextFormField(
+          controller: fieldConroller,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'please fill your Password';
+            } else {
+              return null;
+            }
+          },
           style: const TextStyle(fontSize: 13, color: Colors.deepPurple),
           obscureText: isVisible,
           decoration: InputDecoration(
@@ -171,7 +203,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               title,
               style: TextStyle(color: textColor, fontSize: 20),
             ),
-            onPressed: () {},
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                return;
+              }
+            },
           ),
         ),
       ),
