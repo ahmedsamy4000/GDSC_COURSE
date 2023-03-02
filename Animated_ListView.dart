@@ -31,17 +31,16 @@ class _ListViewTaskState extends State<ListViewTask> {
         children: [
           Center(
             child: IconButton(
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 25,
-              ),
-              onPressed: () {
-                setState(() {
-                  insertItem();
-                });
-              },
-            ),
+                icon: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 25,
+                ),
+                onPressed: () {
+                  setState(() {
+                    insertItem();
+                  });
+                }),
           ),
           AnimatedList(
             shrinkWrap: true,
@@ -51,7 +50,7 @@ class _ListViewTaskState extends State<ListViewTask> {
               return SizeTransition(
                   sizeFactor: animation, child: itembuilder(index, animation));
             },
-          ),
+          )
         ],
       ),
     );
